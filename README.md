@@ -1,0 +1,12 @@
+root
+|-- eventID: string (nullable = true)
+|-- datetime: string (nullable = true)
+|-- user_id: string (nullable = true)
+|-- keyword: string (nullable = true)
+|-- category: string (nullable = true)
+|-- proxy_isp: string (nullable = true)
+|-- platform: string (nullable = true)
+|-- networkType: string (nullable = true)
+|-- action: string (nullable = true)
+|-- userPlansMap: array (nullable = true)
+| |-- element: string (containsNull = true)
