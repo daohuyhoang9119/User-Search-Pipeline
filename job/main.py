@@ -27,10 +27,6 @@ def read_data(path, list_file):
         ])
         data = spark.createDataFrame([],schema = schema)
         for i in list_file:
-            # df = spark.read.parquet(path,i)
-            # df = df.select('datetime','user_id','keyword','platform')
-            # data = data.union(df)
-            # print('Read data {}'.format(i))
             full_path = os.path.join(path, i)
             try:
                 df = spark.read.parquet(full_path)
@@ -67,26 +63,28 @@ def processing_most_search(data):
 
 def write_to_csv(df,output_path):
     try:
-        df.write.mode('overwrite').csv(output_path, header=True)
-        print(f"Data successfully written to {output_path}")
+        # df.write.mode('overwrite').csv(output_path, header=True)
+        # print(f"Data successfully written to {output_path}")
+        for col in df.columns:
+            # Select the column and write it to CSV
+            col_df = df.select(col)
+            col_output_path = os.path.join(output_path, f"{col}.csv")
+            col_df.write.mode('overwrite').csv(col_output_path, header=True)
+            print(f"Column '{col}' successfully written to {col_output_path}")
     except Exception as e:
         print(f"Error writing data to {output_path}: {e}")
+        
 
 def save_distinct_values(df, column,output_file):
     try:
         distinct_values = df.select(column).distinct().rdd.map(lambda row: row[0]).collect()
-        
-        # Convert distinct values to a pandas DataFrame
         distinct_df = pd.DataFrame(distinct_values, columns=[column])
         
-        # Ensure output directory exists
         output_dir = os.path.dirname(output_file)
         if not os.path.exists(output_dir):
             os.makedirs(output_dir)
         
-        # Write to CSV using pandas with UTF-8 encoding
-        distinct_df.to_csv(output_file, index=False, encoding='utf-8')
-        
+        distinct_df.to_csv(output_file, index=False, encoding='utf-8')        
         print(f"Distinct values in {column} saved to {output_file}")
     except Exception as e:
         print(f"Error saving distinct values to {output_file}: {e}")
