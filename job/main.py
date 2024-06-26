@@ -89,7 +89,6 @@ def save_distinct_values(df, column,output_file):
     except Exception as e:
         print(f"Error saving distinct values to {output_file}: {e}")
 
-
     
 def main(path):
     print(path)
